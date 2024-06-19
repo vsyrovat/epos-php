@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql:8.4
+    env_file:
+      - '.env'
+    ports:
+      - "3310:3306"
+    restart: 'no'
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+  adminer:
+    image: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: 127.0.0.1:${MYSQL_PORT}
+    ports:
+      - "8080:8080"
+    restart: 'no'
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php.Dockerfile
+    restart: 'no'
+    ports:
+      - "${PORT}:9999"
+    command: ["php", "-S", "0.0.0.0:9999", "public/index.php"]
