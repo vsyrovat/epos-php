@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Core\Exception\Http400;
 use App\Core\Exception\Http404;
 use App\Core\Response\Response;
 use Throwable;
@@ -22,17 +23,19 @@ class Application
     public function handleHttp(): void
     {
         try {
-            $request = new Request($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+            $request = new Request($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], file_get_contents('php://input'), getallheaders());
             $route = $this->router->resolve($request);
             $route or throw (new Http404());
             [$klass, $method] = $route;
             $controller = $this->container->get($klass);
             /** @var Response $response */
             $response = $controller->$method($request);
-
             http_response_code($response->code);
             header("Content-Type: {$response->contentType}");
             echo $response->content;
+        } catch (Http400 $e) {
+            http_response_code(400);
+            echo "Bad request: {$e->getMessage()}";
         } catch (Http404) {
             http_response_code(404);
             echo "Not found";

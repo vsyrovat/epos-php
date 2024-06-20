@@ -17,7 +17,7 @@ use App\Data\GetOrdersDataProvider;
  */
 class OrderController
 {
-    public function __construct(private Container $container)
+    public function __construct(private readonly Container $container)
     {
     }
 

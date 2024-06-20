@@ -19,6 +19,11 @@ class Router
         $this->addRule('GET', $url, $action);
     }
 
+    public function post(string $url, $action): void
+    {
+        $this->addRule('POST', $url, $action);
+    }
+
     public function resolve(Request $request)
     {
         return $this->rules[$request->method . ' ' . $request->path][2] ?? null;

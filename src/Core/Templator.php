@@ -9,7 +9,7 @@ class Templator
     {
     }
 
-    public function renderPhp($file, $data): string
+    public function renderPhp($file, $data = []): string
     {
         ob_start();
         extract($data);
